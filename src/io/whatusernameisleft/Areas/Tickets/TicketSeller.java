@@ -7,13 +7,14 @@ import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TicketSeller extends Thread {
     protected final String name;
     protected volatile boolean open = true;
     protected final int MAX_QUEUE = 3;
 //    private final AtomicInteger queueCount = new AtomicInteger(0);
-    protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE);
+    protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
 
     public TicketSeller(String name) {
         this.name = name;
@@ -31,25 +32,20 @@ public class TicketSeller extends Thread {
         return name;
     }
 
-    private void sellTicket() {
-        Customer c = null;
-        try {
-            while (!queue.isEmpty()) {
-                c = queue.take();
-                Thread.sleep(500);
-//                Thread.sleep(new Random().nextInt(3) * 1000);
-                c.buyTicket();
-            }
-        } catch (Exception e) {
-            System.out.println(TBT.ANSI_RED + c.getCustomerName() + " is null" + TBT.ANSI_RESET);
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void run() {
         while (open) {
-            sellTicket();
+            Customer c = null;
+            try {
+                while (!queue.isEmpty()) {
+                    c = queue.take();
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(6) * 1000);
+                    c.buyTicket();
+                }
+            } catch (Exception e) {
+                System.out.println(TBT.ANSI_RED + c.getCustomerName() + " is null" + TBT.ANSI_RESET);
+                e.printStackTrace();
+            }
         }
     }
 
