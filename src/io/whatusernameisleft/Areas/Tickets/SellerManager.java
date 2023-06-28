@@ -23,7 +23,7 @@ public class SellerManager {
         }
     }
 
-    public synchronized TicketSeller queue(Customer customer) {
+    public synchronized TicketSeller getShortestQueueSeller() {
         AtomicReference<TicketSeller> shortestQueueSeller = new AtomicReference<>();
         AtomicInteger shortestQueueCount = new AtomicInteger(100);
         sellers.forEach(s -> {
@@ -32,11 +32,6 @@ public class SellerManager {
                 shortestQueueCount.set(s.getQueueCount());
             }
         });
-        try {
-            shortestQueueSeller.get().getQueue().put(customer);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         return shortestQueueSeller.get();
     }

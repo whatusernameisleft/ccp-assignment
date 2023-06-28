@@ -46,7 +46,7 @@ public class TicketSeller extends Thread {
                     c.buyTicket(ticketList.get(ThreadLocalRandom.current().nextInt(ticketList.size())));
                 }
             } catch (Exception e) {
-                System.out.println(TBT.ANSI_RED + c.getCustomerName() + " is null" + TBT.ANSI_RESET);
+                System.out.println(TBT.ANSI_RED + c.getName() + " is null" + TBT.ANSI_RESET);
                 e.printStackTrace();
             }
         }

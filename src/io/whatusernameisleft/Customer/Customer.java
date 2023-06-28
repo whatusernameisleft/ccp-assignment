@@ -47,7 +47,12 @@ public class Customer extends Thread {
     }
 
     private void queue() {
-        seller = sellerManager.queue(this);
+        seller = sellerManager.getShortestQueueSeller();
+        try {
+            seller.getQueue().put(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println(TBT.ANSI_YELLOW + getName() + " is queueing for " + seller.getSellerName() + TBT.ANSI_RESET);
     }
 }
