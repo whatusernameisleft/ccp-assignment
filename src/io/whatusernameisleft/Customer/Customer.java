@@ -1,6 +1,7 @@
 package io.whatusernameisleft.Customer;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
+import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller;
 import io.whatusernameisleft.TBT;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Customer extends Thread {
     private final int id;
-    private boolean hasTicket = false;
+    private Ticket ticket = null;
     private CustomerType customerType = CustomerType.CUSTOMER;
     private final SellerManager sellerManager;
     private TicketSeller seller;
@@ -30,11 +31,11 @@ public class Customer extends Thread {
         return id;
     }
 
-    public void buyTicket() {
-        hasTicket = true;
+    public void buyTicket(Ticket ticket) {
+        this.ticket = ticket;
         customerType = CustomerType.PASSENGER;
         setName(getCustomerName());
-        System.out.println(TBT.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getSellerName() + TBT.ANSI_RESET);
+        System.out.println(TBT.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getSellerName() + " for " + ticket.getDestination() + TBT.ANSI_RESET);
     }
 
     public String getCustomerName() {
@@ -42,7 +43,7 @@ public class Customer extends Thread {
     }
 
     public boolean isPassenger() {
-        return hasTicket;
+        return ticket != null;
     }
 
     private void queue() {

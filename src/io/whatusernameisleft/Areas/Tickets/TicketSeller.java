@@ -3,6 +3,9 @@ package io.whatusernameisleft.Areas.Tickets;
 import io.whatusernameisleft.Customer.Customer;
 import io.whatusernameisleft.TBT;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +16,7 @@ public class TicketSeller extends Thread {
     protected final String name;
     protected volatile boolean open = true;
     protected final int MAX_QUEUE = 3;
-//    private final AtomicInteger queueCount = new AtomicInteger(0);
+    protected final List<Ticket> ticketList = new ArrayList<>(Arrays.asList(Ticket.KL_SENTRAL, Ticket.PASAR_SENI, Ticket.KOTA_RAYA));
     protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
 
     public TicketSeller(String name) {
@@ -40,7 +43,7 @@ public class TicketSeller extends Thread {
                 while (!queue.isEmpty()) {
                     c = queue.take();
                     Thread.sleep(ThreadLocalRandom.current().nextInt(7) * 1000);
-                    c.buyTicket();
+                    c.buyTicket(ticketList.get(ThreadLocalRandom.current().nextInt(ticketList.size())));
                 }
             } catch (Exception e) {
                 System.out.println(TBT.ANSI_RED + c.getCustomerName() + " is null" + TBT.ANSI_RESET);
