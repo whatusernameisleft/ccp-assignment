@@ -1,14 +1,8 @@
 package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
-import io.whatusernameisleft.Customer.Customer;
-
-public class TicketBooth {
+public class TicketBooth extends TicketSeller {
 
     public TicketBooth(String name) {
-
-    }
-
-    public void buyTicket(Customer customer) {
-        System.out.println("Customer-" + customer.getCustomerId());
+        super(name);
     }
 }

@@ -3,6 +3,8 @@ package io.whatusernameisleft.Customer;
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
+import io.whatusernameisleft.Areas.WaitingArea.WaitingArea;
+import io.whatusernameisleft.Areas.WaitingArea.WaitingAreaManager;
 import io.whatusernameisleft.TBT;
 
 public class Customer extends Thread {
@@ -11,10 +13,13 @@ public class Customer extends Thread {
     private CustomerType customerType = CustomerType.CUSTOMER;
     private final SellerManager sellerManager;
     private TicketSeller seller;
+    private final WaitingAreaManager waitingAreaManager;
+    private WaitingArea waitingArea;
 
-    public Customer(int id, SellerManager sellerManager) {
+    public Customer(int id, SellerManager sellerManager, WaitingAreaManager waitingAreaManager) {
         this.id = id;
         this.sellerManager = sellerManager;
+        this.waitingAreaManager = waitingAreaManager;
         setName(getCustomerName());
     }
 
@@ -32,6 +37,7 @@ public class Customer extends Thread {
         customerType = CustomerType.PASSENGER;
         setName(getCustomerName());
         System.out.println(TBT.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getSellerName() + " for " + ticket.getDestination() + TBT.ANSI_RESET);
+        goWait();
     }
 
     public String getCustomerName() {
@@ -46,5 +52,10 @@ public class Customer extends Thread {
         seller = sellerManager.getShortestQueueSeller();
         seller.addToQueue(this);
         System.out.println(TBT.ANSI_YELLOW + getName() + " is queueing for " + seller.getSellerName() + TBT.ANSI_RESET);
+    }
+
+    private void goWait() {
+        waitingArea = waitingAreaManager.getWaitingArea(ticket);
+        waitingArea.wait(this);
     }
 }

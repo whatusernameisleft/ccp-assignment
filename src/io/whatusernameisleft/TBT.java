@@ -1,6 +1,7 @@
 package io.whatusernameisleft;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
+import io.whatusernameisleft.Areas.WaitingArea.WaitingAreaManager;
 import io.whatusernameisleft.Customer.CustomerGenerator;
 
 import java.util.ArrayList;
@@ -19,11 +20,15 @@ public class TBT {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
-        List<String> sellerNames = new ArrayList<>(Arrays.asList("Ticket Machine", "Ticket Booth 1", "Ticket Booth 2"));
-        SellerManager sellerManager = new SellerManager(sellerNames);
+        List<String> machineNames = new ArrayList<>(Arrays.asList("Ticket Machine"));
+        List<String> boothNames = new ArrayList<>(Arrays.asList("Ticket Booth 1", "Ticket Booth 2"));
+        SellerManager sellerManager = new SellerManager(machineNames, boothNames);
         sellerManager.createSellers();
 
-        CustomerGenerator cg = new CustomerGenerator(sellerManager);
+        WaitingAreaManager waitingAreaManager = new WaitingAreaManager();
+        waitingAreaManager.createWaitingAreas();
+
+        CustomerGenerator cg = new CustomerGenerator(sellerManager, waitingAreaManager);
         cg.start();
 
     }
