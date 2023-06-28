@@ -1,13 +1,11 @@
 package io.whatusernameisleft;
 
-import io.whatusernameisleft.Areas.Tickets.*;
-import io.whatusernameisleft.Customer.Customer;
+import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Customer.CustomerGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class TBT {
     public static final String ANSI_RESET = "\u001B[0m";

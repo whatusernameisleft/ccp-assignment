@@ -1,5 +1,9 @@
 package io.whatusernameisleft.Areas.WaitingArea;
 
 public class WaitingArea {
-    public WaitingArea(String name) {}
+    private final String name;
+
+    public WaitingArea(String name) {
+        this.name = name;
+    }
 }

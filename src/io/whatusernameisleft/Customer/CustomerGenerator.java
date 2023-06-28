@@ -1,10 +1,7 @@
 package io.whatusernameisleft.Customer;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
-import io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 

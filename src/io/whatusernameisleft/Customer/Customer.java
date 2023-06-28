@@ -5,10 +5,6 @@ import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller;
 import io.whatusernameisleft.TBT;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 public class Customer extends Thread {
     private final int id;
     private Ticket ticket = null;

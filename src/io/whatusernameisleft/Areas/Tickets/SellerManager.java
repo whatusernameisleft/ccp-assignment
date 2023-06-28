@@ -1,7 +1,5 @@
 package io.whatusernameisleft.Areas.Tickets;
 
-import io.whatusernameisleft.Customer.Customer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
