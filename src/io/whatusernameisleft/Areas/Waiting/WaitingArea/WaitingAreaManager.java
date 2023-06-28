@@ -1,6 +1,7 @@
-package io.whatusernameisleft.Areas.WaitingArea;
+package io.whatusernameisleft.Areas.Waiting.WaitingArea;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
+import io.whatusernameisleft.Areas.Waiting.WaitingZone;
 
 import java.util.*;
 

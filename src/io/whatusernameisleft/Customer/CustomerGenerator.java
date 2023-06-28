@@ -1,7 +1,8 @@
 package io.whatusernameisleft.Customer;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
-import io.whatusernameisleft.Areas.WaitingArea.WaitingAreaManager;
+import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
+import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,10 +12,12 @@ public class CustomerGenerator extends Thread {
     private AtomicInteger i = new AtomicInteger(1);
     private final SellerManager sellerManager;
     private final WaitingAreaManager waitingAreaManager;
+    private final Foyer foyer;
 
-    public CustomerGenerator(SellerManager sellerManager, WaitingAreaManager waitingAreaManager) {
+    public CustomerGenerator(SellerManager sellerManager, WaitingAreaManager waitingAreaManager, Foyer foyer) {
         this.sellerManager = sellerManager;
         this.waitingAreaManager = waitingAreaManager;
+        this.foyer = foyer;
     }
 
     @Override
@@ -25,7 +28,7 @@ public class CustomerGenerator extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Customer c = new Customer(i.get(), sellerManager, waitingAreaManager);
+            Customer c = new Customer(i.get(), sellerManager, waitingAreaManager, foyer);
             c.start();
             i.incrementAndGet();
         }

@@ -1,6 +1,7 @@
 package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
+import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
 import io.whatusernameisleft.Customer.Customer;
 import io.whatusernameisleft.TBT;
 
@@ -14,9 +15,11 @@ public abstract class TicketSeller extends Thread {
     protected final int MAX_QUEUE = 3;
     protected final Ticket[] tickets = Ticket.values();
     protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
+    protected final Foyer foyer;
 
-    public TicketSeller(String name) {
+    public TicketSeller(String name, Foyer foyer) {
         this.name = name;
+        this.foyer = foyer;
     }
 
     public BlockingQueue<Customer> getQueue() {
@@ -44,11 +47,7 @@ public abstract class TicketSeller extends Thread {
     }
 
     public void addToQueue(Customer customer) {
-        try {
-            queue.put(customer);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        if (!queue.offer(customer)) foyer.offer(customer);
     }
 
     @Override
