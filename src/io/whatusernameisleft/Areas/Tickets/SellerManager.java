@@ -1,5 +1,7 @@
 package io.whatusernameisleft.Areas.Tickets;
 
+import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,7 +27,7 @@ public class SellerManager {
         AtomicReference<TicketSeller> shortestQueueSeller = new AtomicReference<>();
         AtomicInteger shortestQueueCount = new AtomicInteger(100);
         sellers.forEach(s -> {
-            if (s.getQueueCount() < shortestQueueCount.get()) {
+            if (s.getQueueCount() < shortestQueueCount.get() && s.isOpen()) {
                 shortestQueueSeller.set(s);
                 shortestQueueCount.set(s.getQueueCount());
             }

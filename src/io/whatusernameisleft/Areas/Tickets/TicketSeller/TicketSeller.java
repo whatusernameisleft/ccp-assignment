@@ -1,5 +1,6 @@
-package io.whatusernameisleft.Areas.Tickets;
+package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
+import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Customer.Customer;
 import io.whatusernameisleft.TBT;
 
@@ -33,6 +34,26 @@ public class TicketSeller extends Thread {
         return name;
     }
 
+    protected void close() {
+        open = false;
+    }
+
+    protected void open() {
+        open = true;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void addToQueue(Customer customer) {
+        try {
+            queue.put(customer);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         while (open) {
@@ -48,9 +69,5 @@ public class TicketSeller extends Thread {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void close() {
-        open = false;
     }
 }

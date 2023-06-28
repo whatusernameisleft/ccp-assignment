@@ -1,4 +1,4 @@
-package io.whatusernameisleft.Areas.Tickets;
+package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
 import io.whatusernameisleft.Customer.Customer;
 

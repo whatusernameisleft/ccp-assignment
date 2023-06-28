@@ -19,7 +19,7 @@ public class TBT {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
-        List<String> sellerNames = new ArrayList<>(Arrays.asList("Ticket Counter", "Ticket Booth 1", "Ticket Booth 2"));
+        List<String> sellerNames = new ArrayList<>(Arrays.asList("Ticket Machine", "Ticket Booth 1", "Ticket Booth 2"));
         SellerManager sellerManager = new SellerManager(sellerNames);
         sellerManager.createSellers();
 

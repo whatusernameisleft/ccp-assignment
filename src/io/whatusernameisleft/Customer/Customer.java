@@ -2,7 +2,7 @@ package io.whatusernameisleft.Customer;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Tickets.Ticket;
-import io.whatusernameisleft.Areas.Tickets.TicketSeller;
+import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
 import io.whatusernameisleft.TBT;
 
 public class Customer extends Thread {
@@ -44,11 +44,7 @@ public class Customer extends Thread {
 
     private void queue() {
         seller = sellerManager.getShortestQueueSeller();
-        try {
-            seller.getQueue().put(this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        seller.addToQueue(this);
         System.out.println(TBT.ANSI_YELLOW + getName() + " is queueing for " + seller.getSellerName() + TBT.ANSI_RESET);
     }
 }
