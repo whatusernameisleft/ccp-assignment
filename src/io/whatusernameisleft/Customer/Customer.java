@@ -1,5 +1,6 @@
 package io.whatusernameisleft.Customer;
 
+import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller;
 import io.whatusernameisleft.TBT;
 
@@ -11,12 +12,12 @@ public class Customer extends Thread {
     private final int id;
     private boolean hasTicket = false;
     private CustomerType customerType = CustomerType.CUSTOMER;
-    private final List<TicketSeller> sellers;
+    private final SellerManager sellerManager;
     private TicketSeller seller;
 
-    public Customer(int id, List<TicketSeller> sellers) {
+    public Customer(int id, SellerManager sellerManager) {
         this.id = id;
-        this.sellers = sellers;
+        this.sellerManager = sellerManager;
         setName(getCustomerName());
     }
 
@@ -45,20 +46,7 @@ public class Customer extends Thread {
     }
 
     private void queue() {
-        AtomicReference<TicketSeller> shortestQueueSeller = new AtomicReference<>();
-        AtomicInteger shortestQueueCount = new AtomicInteger(100);
-        sellers.forEach(s -> {
-            if (s.getQueueCount() < shortestQueueCount.get()) {
-                shortestQueueSeller.set(s);
-                shortestQueueCount.set(s.getQueueCount());
-            }
-        });
-        try {
-            seller = shortestQueueSeller.get();
-            seller.getQueue().put(this);
-            System.out.println(TBT.ANSI_YELLOW + getName() + " is queueing for " + seller.getSellerName() + TBT.ANSI_RESET);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        seller = sellerManager.queue(this);
+        System.out.println(TBT.ANSI_YELLOW + getName() + " is queueing for " + seller.getSellerName() + TBT.ANSI_RESET);
     }
 }

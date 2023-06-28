@@ -1,5 +1,6 @@
 package io.whatusernameisleft.Customer;
 
+import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CustomerGenerator extends Thread {
     private volatile boolean stopped = false;
     private AtomicInteger i = new AtomicInteger(1);
-    private final List<TicketSeller> sellers;
+    private final SellerManager sellerManager;
 
-    public CustomerGenerator(List<TicketSeller> sellers) {
-        this.sellers = sellers;
+    public CustomerGenerator(SellerManager sellerManager) {
+        this.sellerManager = sellerManager;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class CustomerGenerator extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Customer c = new Customer(i.get(), sellers);
+            Customer c = new Customer(i.get(), sellerManager);
             c.start();
             i.incrementAndGet();
         }

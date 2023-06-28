@@ -39,7 +39,7 @@ public class TicketSeller extends Thread {
             try {
                 while (!queue.isEmpty()) {
                     c = queue.take();
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(6) * 1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(7) * 1000);
                     c.buyTicket();
                 }
             } catch (Exception e) {

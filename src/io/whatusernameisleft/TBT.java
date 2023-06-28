@@ -5,6 +5,7 @@ import io.whatusernameisleft.Customer.Customer;
 import io.whatusernameisleft.Customer.CustomerGenerator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -20,19 +21,11 @@ public class TBT {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
-        List<TicketSeller> sellers = new ArrayList<>();
-        TicketSeller s1 = new TicketSeller("Ticket Booth 1");
-        sellers.add(s1);
-        TicketSeller s2 = new TicketSeller("Ticket Booth 2");
-        sellers.add(s2);
-        TicketSeller s3 = new TicketSeller("Ticket Counter");
-        sellers.add(s3);
+        List<String> sellerNames = new ArrayList<>(Arrays.asList("Ticket Counter", "Ticket Booth 1", "Ticket Booth 2"));
+        SellerManager sellerManager = new SellerManager(sellerNames);
+        sellerManager.createSellers();
 
-        s1.start();
-        s2.start();
-        s3.start();
-
-        CustomerGenerator cg = new CustomerGenerator(sellers);
+        CustomerGenerator cg = new CustomerGenerator(sellerManager);
         cg.start();
 
     }
