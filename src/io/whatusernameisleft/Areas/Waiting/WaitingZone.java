@@ -4,6 +4,7 @@ import io.whatusernameisleft.Customer.Customer;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public abstract class WaitingZone {
     protected final String name;
@@ -32,6 +33,10 @@ public abstract class WaitingZone {
 
     public boolean offer(Customer customer) {
         return queue.offer(customer);
+    }
+
+    public boolean offer(Customer customer, long timeout, TimeUnit unit) throws InterruptedException {
+        return queue.offer(customer, timeout, unit);
     }
 
     public boolean isFull() {

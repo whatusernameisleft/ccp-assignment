@@ -2,12 +2,14 @@ package io.whatusernameisleft;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
+import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
 import io.whatusernameisleft.Customer.CustomerGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TBT {
     public static final String ANSI_RESET = "\u001B[0m";
@@ -21,17 +23,16 @@ public class TBT {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
-        Foyer foyer = new Foyer();
+        AtomicInteger customerCounter = new AtomicInteger(0);
+        FoyerManager foyerManager = new FoyerManager();
 
         List<String> machineNames = new ArrayList<>(Arrays.asList("Ticket Machine"));
         List<String> boothNames = new ArrayList<>(Arrays.asList("Ticket Booth 1", "Ticket Booth 2"));
-        SellerManager sellerManager = new SellerManager(machineNames, boothNames, foyer);
-        sellerManager.createSellers();
+        SellerManager sellerManager = new SellerManager(machineNames, boothNames, foyerManager);
 
         WaitingAreaManager waitingAreaManager = new WaitingAreaManager();
-        waitingAreaManager.createWaitingAreas();
 
-        CustomerGenerator cg = new CustomerGenerator(sellerManager, waitingAreaManager, foyer);
+        CustomerGenerator cg = new CustomerGenerator(customerCounter, sellerManager, waitingAreaManager, foyerManager);
         cg.start();
 
     }

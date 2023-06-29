@@ -4,6 +4,7 @@ import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketBooth;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketMachine;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
 import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
+import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,22 +15,23 @@ public class SellerManager {
     private final List<String> machineNames;
     private final List<String> boothNames;
     private List<TicketSeller> sellers = new ArrayList<>();
-    private final Foyer foyer;
+    private final FoyerManager foyerManager;
 
-    public SellerManager(List<String> machineNames, List<String> boothNames, Foyer foyer) {
+    public SellerManager(List<String> machineNames, List<String> boothNames, FoyerManager foyerManager) {
         this.machineNames = machineNames;
         this.boothNames = boothNames;
-        this.foyer = foyer;
+        this.foyerManager = foyerManager;
+        createSellers();
     }
 
-    public void createSellers() {
+    private void createSellers() {
         for (String name : machineNames) {
-            TicketSeller seller = new TicketMachine(name, foyer);
+            TicketSeller seller = new TicketMachine(name, foyerManager);
             seller.start();
             sellers.add(seller);
         }
         for (String name : boothNames) {
-            TicketSeller seller = new TicketBooth(name, foyer);
+            TicketSeller seller = new TicketBooth(name, foyerManager);
             seller.start();
             sellers.add(seller);
         }

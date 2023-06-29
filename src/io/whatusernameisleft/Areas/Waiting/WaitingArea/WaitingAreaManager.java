@@ -1,14 +1,17 @@
 package io.whatusernameisleft.Areas.Waiting.WaitingArea;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
-import io.whatusernameisleft.Areas.Waiting.WaitingZone;
 
 import java.util.*;
 
 public class WaitingAreaManager {
+    public WaitingAreaManager() {
+        createWaitingAreas();
+    }
+
     private Map<Ticket, WaitingArea> waitingAreaMap = new HashMap<>();
 
-    public void createWaitingAreas() {
+    private void createWaitingAreas() {
         Arrays.stream(Ticket.values()).forEach(t -> waitingAreaMap.put(t, new WaitingArea(t)));
     }
 

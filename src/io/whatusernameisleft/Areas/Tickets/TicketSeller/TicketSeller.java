@@ -2,12 +2,15 @@ package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
+import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Customer.Customer;
+import io.whatusernameisleft.Customer.CustomerType;
 import io.whatusernameisleft.TBT;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public abstract class TicketSeller extends Thread {
     protected final String name;
@@ -15,11 +18,12 @@ public abstract class TicketSeller extends Thread {
     protected final int MAX_QUEUE = 3;
     protected final Ticket[] tickets = Ticket.values();
     protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
-    protected final Foyer foyer;
+    protected final FoyerManager foyerManager;
 
-    public TicketSeller(String name, Foyer foyer) {
+    public TicketSeller(String name, FoyerManager foyerManager) {
         this.name = name;
-        this.foyer = foyer;
+        this.foyerManager = foyerManager;
+        setName(name);
     }
 
     public BlockingQueue<Customer> getQueue() {
@@ -28,10 +32,6 @@ public abstract class TicketSeller extends Thread {
 
     public int getQueueCount() {
         return queue.size();
-    }
-
-    public String getSellerName() {
-        return name;
     }
 
     protected void close() {
@@ -47,7 +47,17 @@ public abstract class TicketSeller extends Thread {
     }
 
     public void addToQueue(Customer customer) {
-        if (!queue.offer(customer)) foyer.offer(customer);
+        try {
+            if (queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
+                System.out.println(TBT.ANSI_YELLOW + customer.getName() + " is queueing for " + getName() + TBT.ANSI_RESET);
+            } else {
+                Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
+                foyer.offer(customer);
+                System.out.println(TBT.ANSI_CYAN + getName() + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + TBT.ANSI_RESET);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -56,8 +66,8 @@ public abstract class TicketSeller extends Thread {
             Customer c = null;
             try {
                 while (!queue.isEmpty()) {
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(15) * 1000);
                     c = queue.take();
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(7) * 1000);
                     c.buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
                 }
             } catch (Exception e) {
