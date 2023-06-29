@@ -2,7 +2,8 @@ package io.whatusernameisleft.Areas.Waiting.Foyer;
 
 import io.whatusernameisleft.Customer.CustomerType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FoyerManager {
     private final Map<CustomerType, Foyer> foyerMap = new HashMap<>();

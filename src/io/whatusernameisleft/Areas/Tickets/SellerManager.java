@@ -3,7 +3,6 @@ package io.whatusernameisleft.Areas.Tickets;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketBooth;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketMachine;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
-import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
 import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 
 import java.util.ArrayList;

@@ -1,7 +1,6 @@
 package io.whatusernameisleft;
 
 import io.whatusernameisleft.Areas.Tickets.SellerManager;
-import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
 import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
 import io.whatusernameisleft.Customer.CustomerGenerator;

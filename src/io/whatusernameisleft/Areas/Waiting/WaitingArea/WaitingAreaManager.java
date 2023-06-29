@@ -2,7 +2,9 @@ package io.whatusernameisleft.Areas.Waiting.WaitingArea;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WaitingAreaManager {
     public WaitingAreaManager() {
