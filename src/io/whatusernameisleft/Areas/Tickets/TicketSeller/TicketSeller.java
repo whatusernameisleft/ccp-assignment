@@ -5,7 +5,7 @@ import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
 import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Customer.Customer;
 import io.whatusernameisleft.Customer.CustomerType;
-import io.whatusernameisleft.TBT;
+import io.whatusernameisleft.Formatting;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -52,11 +52,11 @@ public abstract class TicketSeller {
     public void addToQueue(Customer customer) {
         try {
             if (queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
-                System.out.println(TBT.ANSI_YELLOW + customer.getName() + " is queueing for " + name + TBT.ANSI_RESET);
+                System.out.println(Formatting.ANSI_YELLOW + customer.getName() + " is queueing for " + name + Formatting.ANSI_RESET);
             } else {
                 Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
                 foyer.offer(customer);
-                System.out.println(TBT.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + TBT.ANSI_RESET);
+                System.out.println(Formatting.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -64,8 +64,6 @@ public abstract class TicketSeller {
     }
 
     protected void sellTicket() throws InterruptedException {
-        Customer c = null;
-        c = queue.take();
-        c.buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
+        queue.take().buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
     }
 }

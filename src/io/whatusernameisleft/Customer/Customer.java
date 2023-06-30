@@ -7,7 +7,8 @@ import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
 import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingArea;
 import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
-import io.whatusernameisleft.TBT;
+import io.whatusernameisleft.Building;
+import io.whatusernameisleft.Formatting;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -16,17 +17,17 @@ public class Customer extends Thread {
     private final int id;
     private Ticket ticket = null;
     private CustomerType customerType = CustomerType.CUSTOMER;
+    private final FoyerManager foyerManager;
     private final SellerManager sellerManager;
     private TicketSeller seller;
     private final WaitingAreaManager waitingAreaManager;
     private WaitingArea waitingArea;
-    private final FoyerManager foyerManager;
 
-    public Customer(int id, SellerManager sellerManager, WaitingAreaManager waitingAreaManager, FoyerManager foyerManager) {
+    public Customer(int id, Building building) {
         this.id = id;
-        this.sellerManager = sellerManager;
-        this.waitingAreaManager = waitingAreaManager;
-        this.foyerManager = foyerManager;
+        this.foyerManager = building.getFoyerManager();
+        this.sellerManager = building.getSellerManager();
+        this.waitingAreaManager = building.getWaitingAreaManager();
         setName(getCustomerName());
     }
 
@@ -35,19 +36,15 @@ public class Customer extends Thread {
         queue();
     }
 
-    public int getCustomerId() {
-        return id;
-    }
-
     public void buyTicket(Ticket ticket) {
         this.ticket = ticket;
         customerType = CustomerType.PASSENGER;
         setName(getCustomerName());
-        System.out.println(TBT.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getName() + " for " + ticket.getDestination() + TBT.ANSI_RESET);
+        System.out.println(Formatting.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getName() + " for " + ticket.getDestination() + Formatting.ANSI_RESET);
         goWait();
     }
 
-    public String getCustomerName() {
+    private String getCustomerName() {
         return customerType.getType() + "-" + id;
     }
 
@@ -64,11 +61,11 @@ public class Customer extends Thread {
         waitingArea = waitingAreaManager.getWaitingArea(ticket);
         try {
             if (waitingArea.offer(this, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS))
-                System.out.println(TBT.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + TBT.ANSI_RESET);
+                System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + Formatting.ANSI_RESET);
             else {
                 Foyer foyer = foyerManager.getFoyer(CustomerType.PASSENGER);
                 if (foyer.offer(this))
-                    System.out.println(TBT.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + foyer.getName() + TBT.ANSI_RESET);
+                    System.out.println(Formatting.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

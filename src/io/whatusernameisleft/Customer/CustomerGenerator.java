@@ -1,31 +1,16 @@
 package io.whatusernameisleft.Customer;
 
-import io.whatusernameisleft.Areas.Tickets.SellerManager;
-import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
-import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
+import io.whatusernameisleft.Building;
 
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomerGenerator extends Thread {
     private volatile boolean stopped = false;
-    private AtomicInteger id = new AtomicInteger(1);
-    private final AtomicInteger customerCounter;
-    private final int BUILDING_MAX = 45;
-    private final int THRESHOLD = (int) (45 * 0.8);
-    private final SellerManager sellerManager;
-    private final WaitingAreaManager waitingAreaManager;
-    private final FoyerManager foyerManager;
+    private int id = 1;
+    private final Building building;
 
-    public CustomerGenerator(AtomicInteger customerCounter, SellerManager sellerManager, WaitingAreaManager waitingAreaManager, FoyerManager foyerManager) {
-        this.customerCounter = customerCounter;
-        this.sellerManager = sellerManager;
-        this.waitingAreaManager = waitingAreaManager;
-        this.foyerManager = foyerManager;
-    }
-
-    private boolean belowThreshold() {
-        return customerCounter.get() < THRESHOLD;
+    public CustomerGenerator(Building building) {
+        this.building = building;
     }
 
     private void pause() {
@@ -45,12 +30,13 @@ public class CustomerGenerator extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Customer c = new Customer(id.get(), sellerManager, waitingAreaManager, foyerManager);
-                c.start();
-                id.incrementAndGet();
-                if (customerCounter.incrementAndGet() == BUILDING_MAX) pause();
+                Customer customer = new Customer(id, building);
+                building.enter(customer);
+                customer.start();
+                id++;
+                if (building.isFull()) pause();
             }
-            if (belowThreshold()) unpause();
+            if (building.belowThreshold()) unpause();
         }
     }
 }
