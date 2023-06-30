@@ -15,9 +15,8 @@ public class FoyerManager {
     private void createFoyers() {
         for (CustomerType customerType : CustomerType.values()) {
             Foyer foyer = new Foyer("Terminal Foyer");
-            Thread foyerThread = new Thread(foyer);
             foyerMap.put(customerType, foyer);
-            foyerThread.start();
+            foyer.start();
         }
     }
 

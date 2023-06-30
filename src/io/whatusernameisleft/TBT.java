@@ -20,6 +20,8 @@ public class TBT {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_BOLD = "\u001B[1m";
+    public static final String ANSI_FRAMED = "\u001B[51m";
 
     public static void main(String[] args) {
         AtomicInteger customerCounter = new AtomicInteger(0);

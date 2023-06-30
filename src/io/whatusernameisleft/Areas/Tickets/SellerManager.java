@@ -2,6 +2,7 @@ package io.whatusernameisleft.Areas.Tickets;
 
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketBooth;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketMachine;
+import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketPersonnel;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
 import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 
@@ -26,13 +27,14 @@ public class SellerManager {
     private void createSellers() {
         for (String name : machineNames) {
             TicketSeller seller = new TicketMachine(name, foyerManager);
-            seller.start();
+            ((TicketMachine) seller).start();
             sellers.add(seller);
         }
         for (String name : boothNames) {
             TicketSeller seller = new TicketBooth(name, foyerManager);
-            seller.start();
+            TicketPersonnel personnel = new TicketPersonnel(seller);
             sellers.add(seller);
+            personnel.start();
         }
     }
 

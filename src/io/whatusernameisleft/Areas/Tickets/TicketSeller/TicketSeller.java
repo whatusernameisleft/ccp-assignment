@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public abstract class TicketSeller extends Thread {
+public abstract class TicketSeller {
     protected final String name;
     protected volatile boolean open = true;
     protected final int MAX_QUEUE = 3;
@@ -23,7 +23,6 @@ public abstract class TicketSeller extends Thread {
     public TicketSeller(String name, FoyerManager foyerManager) {
         this.name = name;
         this.foyerManager = foyerManager;
-        setName(name);
     }
 
     public BlockingQueue<Customer> getQueue() {
@@ -46,34 +45,27 @@ public abstract class TicketSeller extends Thread {
         return open;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void addToQueue(Customer customer) {
         try {
             if (queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
-                System.out.println(TBT.ANSI_YELLOW + customer.getName() + " is queueing for " + getName() + TBT.ANSI_RESET);
+                System.out.println(TBT.ANSI_YELLOW + customer.getName() + " is queueing for " + name + TBT.ANSI_RESET);
             } else {
                 Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
                 foyer.offer(customer);
-                System.out.println(TBT.ANSI_CYAN + getName() + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + TBT.ANSI_RESET);
+                System.out.println(TBT.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + TBT.ANSI_RESET);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void run() {
-        while (open) {
-            Customer c = null;
-            try {
-                while (!queue.isEmpty()) {
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(15) * 1000);
-                    c = queue.take();
-                    c.buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
-                }
-            } catch (Exception e) {
-                System.out.println(TBT.ANSI_RED + c.getName() + " is null" + TBT.ANSI_RESET);
-                e.printStackTrace();
-            }
-        }
+    protected void sellTicket() throws InterruptedException {
+        Customer c = null;
+        c = queue.take();
+        c.buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
     }
 }
