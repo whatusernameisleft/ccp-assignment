@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Ticket {
-    KL_SENTRAL("KL Sentral Bus Terminal"),
-    PASAR_SENI("Pasar Seni Bus Hub"),
-    KOTA_RAYA("Kota Raya Bus Terminal");
+    BUKIT_BINTANG("Bukit Bintang"),
+    KLCC("KLCC"),
+    KL_TOWER("KL Tower");
 
     private String destination;
 
