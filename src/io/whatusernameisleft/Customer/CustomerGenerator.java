@@ -26,7 +26,7 @@ public class CustomerGenerator extends Thread {
         while (true) {
             if (!stopped) {
                 try {
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(4) * 1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

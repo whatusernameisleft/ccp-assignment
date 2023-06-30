@@ -37,7 +37,7 @@ public class TicketMachine extends TicketSeller implements Runnable {
     public void run() {
         while (!broken) {
             try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(4) * 1000);
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
                 sellTicket();
 
                 if (ThreadLocalRandom.current().nextDouble() < 0.4) breakdown();

@@ -32,10 +32,10 @@ public class TicketPersonnel extends Thread {
     public void run() {
         while (!onBreak) {
             try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(7) * 1000);
+                Thread.sleep(ThreadLocalRandom.current().nextInt(3, 8) * 1000);
                 seller.sellTicket();
 
-                if (ThreadLocalRandom.current().nextDouble() < 0.5) goOnBreak();
+                if (ThreadLocalRandom.current().nextDouble() < 0.1) goOnBreak();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
