@@ -5,10 +5,10 @@ import io.whatusernameisleft.Formatting;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicketPersonnel extends Thread {
-    private final TicketSeller seller;
+    private final TicketBooth seller;
     private volatile boolean onBreak = false;
 
-    public TicketPersonnel(TicketSeller seller) {
+    public TicketPersonnel(TicketBooth seller) {
         this.seller = seller;
     }
 

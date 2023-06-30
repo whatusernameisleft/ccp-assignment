@@ -26,12 +26,12 @@ public class SellerManager {
 
     private void createSellers() {
         for (String name : machineNames) {
-            TicketSeller seller = new TicketMachine(name, foyerManager);
-            ((TicketMachine) seller).start();
+            TicketMachine seller = new TicketMachine(name, foyerManager);
+            seller.start();
             sellers.add(seller);
         }
         for (String name : boothNames) {
-            TicketSeller seller = new TicketBooth(name, foyerManager);
+            TicketBooth seller = new TicketBooth(name, foyerManager);
             TicketPersonnel personnel = new TicketPersonnel(seller);
             sellers.add(seller);
             personnel.start();

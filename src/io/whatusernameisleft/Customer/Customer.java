@@ -21,7 +21,6 @@ public class Customer extends Thread {
     private final SellerManager sellerManager;
     private TicketSeller seller;
     private final WaitingAreaManager waitingAreaManager;
-    private WaitingArea waitingArea;
 
     public Customer(int id, Building building) {
         this.id = id;
@@ -58,7 +57,7 @@ public class Customer extends Thread {
     }
 
     private void goWait() {
-        waitingArea = waitingAreaManager.getWaitingArea(ticket);
+        WaitingArea waitingArea = waitingAreaManager.getWaitingArea(ticket);
         try {
             if (waitingArea.offer(this, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS))
                 System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + Formatting.ANSI_RESET);

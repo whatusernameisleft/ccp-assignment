@@ -38,8 +38,4 @@ public abstract class WaitingZone {
     public boolean offer(Customer customer, long timeout, TimeUnit unit) throws InterruptedException {
         return queue.offer(customer, timeout, unit);
     }
-
-    public boolean isFull() {
-        return queue.remainingCapacity() == 0;
-    }
 }

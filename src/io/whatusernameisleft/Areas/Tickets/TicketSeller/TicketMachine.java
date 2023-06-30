@@ -6,7 +6,6 @@ import io.whatusernameisleft.Formatting;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicketMachine extends TicketSeller implements Runnable {
-    private Thread thread;
     private volatile boolean broken = false;
 
     public TicketMachine(String name, FoyerManager foyerManager) {
@@ -14,7 +13,7 @@ public class TicketMachine extends TicketSeller implements Runnable {
     }
 
     public void start() {
-        thread = new Thread(this);
+        Thread thread = new Thread(this);
         thread.start();
     }
 
