@@ -14,6 +14,7 @@ public class TicketMachine extends TicketSeller implements Runnable {
 
     public void start() {
         Thread thread = new Thread(this);
+        thread.setName(name);
         thread.start();
     }
 
@@ -21,6 +22,7 @@ public class TicketMachine extends TicketSeller implements Runnable {
         broken = true;
         close();
         System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_RED + getName() + " has broken down." + Formatting.ANSI_RESET);
+        redirectQueue();
         Thread.sleep(ThreadLocalRandom.current().nextInt(7, 10) * 1000);
         repair();
     }

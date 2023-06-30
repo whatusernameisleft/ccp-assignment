@@ -10,6 +10,7 @@ public class Foyer extends WaitingZone implements Runnable {
 
     public void start() {
         Thread thread = new Thread(this);
+        thread.setName(name);
         thread.start();
     }
 

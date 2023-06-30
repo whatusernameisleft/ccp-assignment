@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class TicketSeller {
     protected final String name;
-    protected volatile boolean open = true;
+    protected boolean open = true;
     protected final int MAX_QUEUE = 3;
     protected final Ticket[] tickets = Ticket.values();
     protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
@@ -65,5 +65,15 @@ public abstract class TicketSeller {
 
     protected void sellTicket() throws InterruptedException {
         queue.take().buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
+    }
+
+    protected void redirectQueue() {
+        while (!open && !queue.isEmpty()) {
+            try {
+                queue.take().tryAgain();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

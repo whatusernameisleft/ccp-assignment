@@ -15,7 +15,7 @@ public class Building {
     private final int BUILDING_MAX = 45;
     private final int THRESHOLD = (int) (BUILDING_MAX * 0.8);
     private final FoyerManager foyerManager = new FoyerManager();
-    private final SellerManager sellerManager = new SellerManager(Collections.singletonList("Ticket Machine"), Arrays.asList("Ticket Booth 1", "Ticket Booth 2"), foyerManager);;
+    private final SellerManager sellerManager = new SellerManager(Collections.singletonList("Ticket Machine"), Arrays.asList("Ticket Booth 1", "Ticket Booth 2"), foyerManager);
     private final WaitingAreaManager waitingAreaManager = new WaitingAreaManager();
 
     public void enter(Customer customer) {

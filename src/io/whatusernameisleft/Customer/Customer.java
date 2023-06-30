@@ -53,7 +53,12 @@ public class Customer extends Thread {
 
     private void queue() {
         seller = sellerManager.getShortestQueueSeller();
-        seller.addToQueue(this);
+        if (seller == null) {
+            Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
+            System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
+            foyer.offer(this);
+        }
+        else seller.addToQueue(this);
     }
 
     private void goWait() {
