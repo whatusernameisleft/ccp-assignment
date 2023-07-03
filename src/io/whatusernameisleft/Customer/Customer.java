@@ -39,7 +39,7 @@ public class Customer extends Thread {
         this.ticket = ticket;
         customerType = CustomerType.PASSENGER;
         setName(getCustomerName());
-        System.out.println(Formatting.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getName() + " for " + ticket.getDestination() + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getName() + " for " + ticket.getDestination() + "." + Formatting.ANSI_RESET);
         goWait();
     }
 
@@ -55,7 +55,7 @@ public class Customer extends Thread {
         seller = sellerManager.getShortestQueueSeller();
         if (seller == null) {
             Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
-            System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
+            System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
             foyer.offer(this);
         }
         else seller.addToQueue(this);
@@ -65,11 +65,11 @@ public class Customer extends Thread {
         WaitingArea waitingArea = waitingAreaManager.getWaitingArea(ticket);
         try {
             if (waitingArea.offer(this, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS))
-                System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + Formatting.ANSI_RESET);
+                System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + "." + Formatting.ANSI_RESET);
             else {
                 Foyer foyer = foyerManager.getFoyer(CustomerType.PASSENGER);
                 if (foyer.offer(this))
-                    System.out.println(Formatting.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
+                    System.out.println(Formatting.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

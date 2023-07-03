@@ -15,18 +15,6 @@ public abstract class WaitingZone {
         queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
     }
 
-    public BlockingQueue<Customer> getQueue() {
-        return queue;
-    }
-
-    public void wait(Customer customer) {
-        try {
-            queue.put(customer);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getName() {
         return name;
     }

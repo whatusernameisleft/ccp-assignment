@@ -19,9 +19,4 @@ public enum Ticket {
         return destination;
     }
 
-    public static List<String> getAllDestinations() {
-        List<String> allDestinations = new ArrayList<>();
-        Arrays.stream(values()).forEach(d -> allDestinations.add(d.getDestination()));
-        return allDestinations;
-    }
 }

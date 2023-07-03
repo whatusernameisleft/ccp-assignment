@@ -25,10 +25,6 @@ public abstract class TicketSeller {
         this.foyerManager = foyerManager;
     }
 
-    public BlockingQueue<Customer> getQueue() {
-        return queue;
-    }
-
     public int getQueueCount() {
         return queue.size();
     }
@@ -52,11 +48,11 @@ public abstract class TicketSeller {
     public void addToQueue(Customer customer) {
         try {
             if (queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
-                System.out.println(Formatting.ANSI_YELLOW + customer.getName() + " is queueing for " + name + Formatting.ANSI_RESET);
+                System.out.println(Formatting.ANSI_YELLOW + customer.getName() + " is queueing for " + name + "." + Formatting.ANSI_RESET);
             } else {
                 Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
                 foyer.offer(customer);
-                System.out.println(Formatting.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + Formatting.ANSI_RESET);
+                System.out.println(Formatting.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

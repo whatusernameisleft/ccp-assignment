@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WaitingAreaManager {
+    private Map<Ticket, WaitingArea> waitingAreaMap = new HashMap<>();
+
     public WaitingAreaManager() {
         createWaitingAreas();
     }
-
-    private Map<Ticket, WaitingArea> waitingAreaMap = new HashMap<>();
 
     private void createWaitingAreas() {
         Arrays.stream(Ticket.values()).forEach(t -> waitingAreaMap.put(t, new WaitingArea(t)));
