@@ -1,12 +1,8 @@
 package io.whatusernameisleft.Customer;
 
-import io.whatusernameisleft.Areas.Tickets.SellerManager;
 import io.whatusernameisleft.Areas.Tickets.Ticket;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
-import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
-import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
 import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingArea;
-import io.whatusernameisleft.Areas.Waiting.WaitingArea.WaitingAreaManager;
 import io.whatusernameisleft.Building;
 import io.whatusernameisleft.Formatting;
 
@@ -16,68 +12,114 @@ import java.util.concurrent.TimeUnit;
 public class Customer extends Thread {
     private final int id;
     private Ticket ticket = null;
-    private CustomerType customerType = CustomerType.CUSTOMER;
-    private final FoyerManager foyerManager;
-    private final SellerManager sellerManager;
+    private volatile CustomerType customerType = CustomerType.OUTSIDE;
+    private volatile boolean waiting = false;
+    private final Building building;
     private TicketSeller seller;
-    private final WaitingAreaManager waitingAreaManager;
 
     public Customer(int id, Building building) {
         this.id = id;
-        this.foyerManager = building.getFoyerManager();
-        this.sellerManager = building.getSellerManager();
-        this.waitingAreaManager = building.getWaitingAreaManager();
+        this.building = building;
         setName(getCustomerName());
     }
 
     @Override
     public void run() {
-        queue();
+        while (customerType != CustomerType.LEFT) {
+            try {
+                move();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    private void move() throws InterruptedException {
+        switch (customerType) {
+            case OUTSIDE:
+                Thread.sleep(ThreadLocalRandom.current().nextInt(3) * 1000);
+                enterBuilding();
+                break;
+            case CUSTOMER:
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
+                queue();
+                break;
+            case PASSENGER:
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
+                goWait();
+                break;
+        }
+    }
+
+    public void becomeCustomer() {
+        customerType = CustomerType.CUSTOMER;
+        waiting = false;
+    }
+
+    public void leave() {
+        customerType = CustomerType.LEFT;
+    }
+
+    private void enterBuilding() throws InterruptedException {
+        if (!building.enter(this)) {
+            if (!waiting) {
+                System.out.println(Formatting.ANSI_FRAMED + Formatting.ANSI_WHITE + getName() + " is waiting outside of the building." + Formatting.ANSI_RESET);
+                waiting = true;
+            }
+        }
+    }
+
+    private void queue() throws InterruptedException {
+        synchronized (this) {
+            seller = building.getSellerManager().getShortestQueueSeller();
+            if (seller == null) {
+                if (!waiting) {
+                    System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + building.getFoyer().getName() + "." + Formatting.ANSI_RESET);
+                    waiting = true;
+                }
+                return;
+            } else if (seller.addToQueue(this)) {;
+                System.out.println(Formatting.ANSI_YELLOW + getName() + " is queueing for " + seller.getName() + "." + Formatting.ANSI_RESET);
+                waiting = false;
+                wait();
+            } else {
+                if (!waiting) {
+                    System.out.println(Formatting.ANSI_CYAN + seller.getName() + " queue is full. " + getName() + " is waiting in " + building.getFoyer().getName() + "." + Formatting.ANSI_RESET);
+                    waiting = true;
+                }
+            }
+        }
+    }
+
+    private void goWait() throws InterruptedException {
+        synchronized (this) {
+            WaitingArea waitingArea = building.getWaitingAreaManager().getWaitingArea(ticket);
+            if (waitingArea.offer(this, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
+                System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + "." + Formatting.ANSI_RESET);
+                customerType = CustomerType.WAITING;
+                waiting = false;
+                wait();
+            } else {
+                if (!waiting) {
+                    System.out.println(Formatting.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + building.getFoyer().getName() + "." + Formatting.ANSI_RESET);
+                    waiting = true;
+                }
+            }
+        }
+}
 
     public void buyTicket(Ticket ticket) {
         this.ticket = ticket;
         customerType = CustomerType.PASSENGER;
         setName(getCustomerName());
         System.out.println(Formatting.ANSI_GREEN + getName() + " has bought a ticket from " + seller.getName() + " for " + ticket.getDestination() + "." + Formatting.ANSI_RESET);
-        goWait();
     }
 
     private String getCustomerName() {
         return customerType.getType() + "-" + id;
     }
 
-    public boolean isPassenger() {
-        return ticket != null;
-    }
-
-    private void queue() {
-        seller = sellerManager.getShortestQueueSeller();
-        if (seller == null) {
-            Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
-            System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
-            foyer.offer(this);
-        }
-        else seller.addToQueue(this);
-    }
-
-    private void goWait() {
-        WaitingArea waitingArea = waitingAreaManager.getWaitingArea(ticket);
-        try {
-            if (waitingArea.offer(this, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS))
-                System.out.println(Formatting.ANSI_BLUE + getName() + " is waiting in " + waitingArea.getName() + "." + Formatting.ANSI_RESET);
-            else {
-                Foyer foyer = foyerManager.getFoyer(CustomerType.PASSENGER);
-                if (foyer.offer(this))
-                    System.out.println(Formatting.ANSI_CYAN + waitingArea.getName() + " is full. " + getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void tryAgain() {
-        if (isPassenger()) goWait();
-        else queue();
+    public boolean isWaiting() {
+        return customerType == CustomerType.WAITING;
     }
 }

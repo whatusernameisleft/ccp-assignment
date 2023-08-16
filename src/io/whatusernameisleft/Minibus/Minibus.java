@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Minibus extends Thread {
+    private volatile boolean running = true;
     private final Ticket ticket;
     private final Building building;
     private final int MAX_SEATS = 10;
@@ -27,7 +28,7 @@ public class Minibus extends Thread {
 
     public void board(Customer customer) {
         seats.offer(customer);
-        System.out.println(Formatting.ANSI_PURPLE + customer.getName() + " has boarded the " + getName() + "." + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_PURPLE + customer.getName() + " has boarded the " + getName() + ". (" + seats.size() + "/" + MAX_SEATS + ")" + Formatting.ANSI_RESET);
     }
 
     public boolean isFull() {
@@ -40,21 +41,28 @@ public class Minibus extends Thread {
 
     private void arrive() {
         building.getMinibusManager().park(this);
-        System.out.println(Formatting.ANSI_PURPLE + Formatting.ANSI_FRAMED + Formatting.ANSI_BOLD + getName() + " has arrived at the terminal." + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_PURPLE + Formatting.ANSI_FRAMED + Formatting.ANSI_BOLD + " " + getName() + " has arrived at the terminal. " + Formatting.ANSI_RESET);
     }
 
     private void leave() {
-        System.out.println(Formatting.ANSI_YELLOW + Formatting.ANSI_FRAMED + Formatting.ANSI_BOLD + getName() + " has left the terminal." + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_YELLOW + Formatting.ANSI_FRAMED + Formatting.ANSI_BOLD + " " + getName() + " has left the terminal. " + Formatting.ANSI_RESET);
         building.leave(seats.size());
+        seats.forEach(Customer::leave);
         clear();
+        building.close();
+    }
+
+    public void close() {
+        running = false;
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (running && !building.isClosed()) {
             try {
                 synchronized (this) {
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(10, 21) * 1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(15, 21) * 1000);
+                    if (building.isClosed()) return;
                     arrive();
                     this.wait();
                 }

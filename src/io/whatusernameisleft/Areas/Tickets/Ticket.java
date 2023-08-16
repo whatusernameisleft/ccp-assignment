@@ -1,9 +1,5 @@
 package io.whatusernameisleft.Areas.Tickets;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public enum Ticket {
     BUKIT_BINTANG("Bukit Bintang"),
     KLCC("KLCC"),

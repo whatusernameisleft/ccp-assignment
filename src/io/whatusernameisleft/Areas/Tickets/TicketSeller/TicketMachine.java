@@ -1,6 +1,6 @@
 package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
-import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
+import io.whatusernameisleft.Building;
 import io.whatusernameisleft.Formatting;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -8,8 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TicketMachine extends TicketSeller implements Runnable {
     private volatile boolean broken = false;
 
-    public TicketMachine(String name, FoyerManager foyerManager) {
-        super(name, foyerManager);
+    public TicketMachine(String name, Building building) {
+        super(name, building);
     }
 
     public void start() {
@@ -21,28 +21,31 @@ public class TicketMachine extends TicketSeller implements Runnable {
     private void breakdown() throws InterruptedException {
         broken = true;
         close();
-        System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_RED + getName() + " has broken down." + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_RED + " " + getName() + " has broken down. " + Formatting.ANSI_RESET);
         redirectQueue();
         Thread.sleep(ThreadLocalRandom.current().nextInt(7, 10) * 1000);
         repair();
     }
 
     private void repair() {
-        System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_GREEN + getName() + " has been repaired." + Formatting.ANSI_RESET);
+        System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_GREEN + " " + getName() + " has been repaired. " + Formatting.ANSI_RESET);
         broken = false;
         open();
     }
 
     @Override
     public void run() {
-        while (!broken) {
-            try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
-                sellTicket();
+        while (open.get() && !building.isClosed()) {
+            while (!broken) {
+                try {
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(3, 7) * 1000);
+                    if (building.isClosed()) return;
+                    sellTicket();
 
-                if (ThreadLocalRandom.current().nextDouble() < 0.4) breakdown();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                    if (ThreadLocalRandom.current().nextDouble() < 0.4) breakdown();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

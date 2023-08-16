@@ -1,10 +1,9 @@
 package io.whatusernameisleft.Areas.Tickets;
 
-import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketBooth;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketMachine;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketPersonnel;
 import io.whatusernameisleft.Areas.Tickets.TicketSeller.TicketSeller;
-import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
+import io.whatusernameisleft.Building;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,27 +13,29 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SellerManager {
     private final List<String> machineNames;
     private final List<String> boothNames;
+    private final Building building;
     private List<TicketSeller> sellers = new ArrayList<>();
-    private final FoyerManager foyerManager;
+    private List<TicketPersonnel> personnel = new ArrayList<>();
 
-    public SellerManager(List<String> machineNames, List<String> boothNames, FoyerManager foyerManager) {
+    public SellerManager(List<String> machineNames, List<String> boothNames, Building building) {
         this.machineNames = machineNames;
         this.boothNames = boothNames;
-        this.foyerManager = foyerManager;
+        this.building = building;
         createSellers();
     }
 
     private void createSellers() {
         for (String name : machineNames) {
-            TicketMachine seller = new TicketMachine(name, foyerManager);
+            TicketMachine seller = new TicketMachine(name, building);
             seller.start();
             sellers.add(seller);
         }
         for (String name : boothNames) {
-            TicketBooth seller = new TicketBooth(name, foyerManager);
-            TicketPersonnel personnel = new TicketPersonnel(seller);
+            TicketSeller seller = new TicketSeller(name, building);
+            TicketPersonnel personnel = new TicketPersonnel(seller, building);
             sellers.add(seller);
             personnel.start();
+            this.personnel.add(personnel);
         }
     }
 
@@ -42,12 +43,17 @@ public class SellerManager {
         AtomicReference<TicketSeller> shortestQueueSeller = new AtomicReference<>();
         AtomicInteger shortestQueueCount = new AtomicInteger(100);
         sellers.forEach(s -> {
-            if (s.getQueueCount() < shortestQueueCount.get() && s.isOpen()) {
+            if (s.isOpen().get() && s.getQueueCount() < shortestQueueCount.get()) {
                 shortestQueueSeller.set(s);
                 shortestQueueCount.set(s.getQueueCount());
             }
         });
 
         return shortestQueueSeller.get();
+    }
+
+    public void closeSellers() {
+        sellers.get(0).close();
+        personnel.forEach(TicketPersonnel::leave);
     }
 }

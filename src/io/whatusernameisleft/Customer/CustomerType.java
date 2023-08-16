@@ -1,8 +1,11 @@
 package io.whatusernameisleft.Customer;
 
 public enum CustomerType {
+    OUTSIDE("Customer"),
     CUSTOMER("Customer"),
-    PASSENGER("Passenger");
+    PASSENGER("Passenger"),
+    WAITING("Passenger"),
+    LEFT("Left");
 
     private String type;
 

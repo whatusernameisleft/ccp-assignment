@@ -1,43 +1,42 @@
 package io.whatusernameisleft.Areas.Tickets.TicketSeller;
 
 import io.whatusernameisleft.Areas.Tickets.Ticket;
-import io.whatusernameisleft.Areas.Waiting.Foyer.Foyer;
-import io.whatusernameisleft.Areas.Waiting.Foyer.FoyerManager;
+import io.whatusernameisleft.Building;
 import io.whatusernameisleft.Customer.Customer;
-import io.whatusernameisleft.Customer.CustomerType;
 import io.whatusernameisleft.Formatting;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class TicketSeller {
+public class TicketSeller {
     protected final String name;
-    protected boolean open = true;
+    protected AtomicBoolean open = new AtomicBoolean(true);
     protected final int MAX_QUEUE = 3;
     protected final Ticket[] tickets = Ticket.values();
     protected final BlockingQueue<Customer> queue = new ArrayBlockingQueue<>(MAX_QUEUE, true);
-    protected final FoyerManager foyerManager;
+    protected final Building building;
 
-    public TicketSeller(String name, FoyerManager foyerManager) {
+    public TicketSeller(String name, Building building) {
         this.name = name;
-        this.foyerManager = foyerManager;
+        this.building = building;
     }
 
     public int getQueueCount() {
         return queue.size();
     }
 
-    protected void close() {
-        open = false;
+    public void close() {
+        open.set(false);
     }
 
-    protected void open() {
-        open = true;
+    public void open() {
+        open.set(true);
     }
 
-    public boolean isOpen() {
+    public AtomicBoolean isOpen() {
         return open;
     }
 
@@ -45,28 +44,32 @@ public abstract class TicketSeller {
         return name;
     }
 
-    public void addToQueue(Customer customer) {
+    public boolean addToQueue(Customer customer) {
         try {
-            if (queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS)) {
-                System.out.println(Formatting.ANSI_YELLOW + customer.getName() + " is queueing for " + name + "." + Formatting.ANSI_RESET);
-            } else {
-                Foyer foyer = foyerManager.getFoyer(CustomerType.CUSTOMER);
-                foyer.offer(customer);
-                System.out.println(Formatting.ANSI_CYAN + name + " queue is full. " + customer.getName() + " is waiting in " + foyer.getName() + "." + Formatting.ANSI_RESET);
-            }
+            return queue.offer(customer, ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    protected void sellTicket() throws InterruptedException {
-        queue.take().buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
+    protected void sellTicket() {
+        if (queue.isEmpty()) return;
+        Customer customer = queue.poll();
+        synchronized (customer) {
+            customer.buyTicket(tickets[ThreadLocalRandom.current().nextInt(tickets.length)]);
+            customer.notify();
+        }
     }
 
     protected void redirectQueue() {
-        while (!open && !queue.isEmpty()) {
+        while (!open.get() && !queue.isEmpty()) {
             try {
-                queue.take().tryAgain();
+                Customer customer = queue.take();
+                synchronized (customer) {
+                    System.out.println(Formatting.ANSI_YELLOW + Formatting.ANSI_ITALIC + customer.getName() + " has been redirected." + Formatting.ANSI_RESET);
+                    customer.notify();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -10,6 +10,7 @@ import io.whatusernameisleft.Minibus.MinibusManager;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicketInspector extends Thread {
+    private boolean working = true;
     private final WaitingAreaManager waitingAreaManager;
     private final MinibusManager minibusManager;
 
@@ -20,9 +21,13 @@ public class TicketInspector extends Thread {
         start();
     }
 
+    public void leave() {
+        working = false;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (working) {
             Minibus minibus = minibusManager.getMinibus();
             if (minibus == null) continue;
             synchronized (minibus) {
@@ -33,13 +38,18 @@ public class TicketInspector extends Thread {
                 }
                 while (!minibus.isFull() && !waitingArea.isEmpty()) {
                     try {
-                        Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) * 1000);
+                        Thread.sleep(ThreadLocalRandom.current().nextInt(1, 4) *  1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     Customer customer = waitingArea.getCustomer();
-                    System.out.println(Formatting.ANSI_CYAN + Formatting.ANSI_ITALIC + getName() + " is checking " + customer.getName() + "'s ticket." + Formatting.ANSI_RESET);
-                    if (customer.isPassenger()) minibus.board(customer);
+                    synchronized (customer) {
+                        System.out.println(Formatting.ANSI_CYAN + Formatting.ANSI_ITALIC + getName() + " is checking " + customer.getName() + "'s ticket in " + waitingArea.getName() + "." + Formatting.ANSI_RESET);
+                        if (customer.isWaiting()) {
+                            customer.notify();
+                            minibus.board(customer);
+                        }
+                    }
                 }
                 minibus.notify();
             }
