@@ -4,7 +4,6 @@ import io.whatusernameisleft.Building;
 
 public class CustomerGenerator {
     private final int CUSTOMERS;
-    private volatile boolean stopped = false;
     private final Building building;
 
     public CustomerGenerator(Building building, int customers) {

@@ -38,7 +38,7 @@ public class TicketMachine extends TicketSeller implements Runnable {
         while (open.get() && !building.isClosed()) {
             while (!broken) {
                 try {
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(3, 7) * 1000);
+                    Thread.sleep(ThreadLocalRandom.current().nextInt(4) * 1000);
                     if (building.isClosed()) return;
                     sellTicket();
 

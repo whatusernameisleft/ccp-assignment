@@ -61,7 +61,12 @@ public class Minibus extends Thread {
         while (running && !building.isClosed()) {
             try {
                 synchronized (this) {
-                    Thread.sleep(ThreadLocalRandom.current().nextInt(15, 21) * 1000);
+                    if (ThreadLocalRandom.current().nextDouble() < 0.1) {
+                        System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_RED + " " + getName() + " has been delayed. " + Formatting.ANSI_RESET);
+                        Thread.sleep(ThreadLocalRandom.current().nextInt(25, 36) * 1000);
+                    } else {
+                        Thread.sleep(ThreadLocalRandom.current().nextInt(20, 31) * 1000);
+                    }
                     if (building.isClosed()) return;
                     arrive();
                     this.wait();

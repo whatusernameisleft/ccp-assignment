@@ -10,7 +10,7 @@ import io.whatusernameisleft.Minibus.MinibusManager;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TicketInspector extends Thread {
-    private boolean working = true;
+    private volatile boolean working = true;
     private final WaitingAreaManager waitingAreaManager;
     private final MinibusManager minibusManager;
 

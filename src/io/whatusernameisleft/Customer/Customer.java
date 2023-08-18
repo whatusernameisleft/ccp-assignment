@@ -77,7 +77,6 @@ public class Customer extends Thread {
                     System.out.println(Formatting.ANSI_BOLD + Formatting.ANSI_FRAMED + Formatting.ANSI_CYAN + "No ticket sellers are open. " + getName() + " is waiting in " + building.getFoyer().getName() + "." + Formatting.ANSI_RESET);
                     waiting = true;
                 }
-                return;
             } else if (seller.addToQueue(this)) {;
                 System.out.println(Formatting.ANSI_YELLOW + getName() + " is queueing for " + seller.getName() + "." + Formatting.ANSI_RESET);
                 waiting = false;

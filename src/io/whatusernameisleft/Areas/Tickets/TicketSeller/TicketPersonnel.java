@@ -39,7 +39,7 @@ public class TicketPersonnel extends Thread {
     public void run() {
         while (!onBreak && !building.isClosed()) {
             try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(5, 11) * 1000);
+                Thread.sleep(ThreadLocalRandom.current().nextInt(2, 7) * 1000);
                 if (building.isClosed()) return;
                 seller.sellTicket();
 
